@@ -2,11 +2,21 @@
 <html>
 <head>
   <title>Functional Reactive Programming</title>
-  <script type="text/javascript" src="Bacon.js"></script>
   <script type="text/javascript" src="jquery-2.0.3.js"></script>
+  <script type="text/javascript" src="Bacon.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css"></link>
 </head>
 <body>
-  <canvas id="canvas" width="400" height="600"></canvas>
+  <div>
+    <div>
+      <canvas id="draw" width="400" height="600"></canvas>
+    </div>
+    <div>
+      <span id="coordinates"></span>
+    </div>
+  </div>
+
+
   <script type="text/javascript" src="draw.js"></script>
 </body>
 </html>
