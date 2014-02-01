@@ -12,15 +12,16 @@ $(function() {
 
   var color = $('#color').asEventStream('input').map(function(v) {
     return v.target.value;
-  }).toProperty();
+  }).toProperty('#000000');
 
-  function drawLine(points) {
+  function drawLine(template) {
+    var points = template.points
     var p1 = points[0];
     var p2 = points[1];
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
-    ctx.strokeStyle = '#ff0000';
+    ctx.strokeStyle = template.color;
     ctx.stroke();
   }
 
@@ -32,7 +33,18 @@ $(function() {
 
   points.map(toCoords).assign($('#coordinates'), 'text');
   color.assign($('#colorSpan'), 'text');
-  mouseDown.flatMap(function() {
+
+  var movement = mouseDown.flatMap(function() {
     return points.slidingWindow(2,2).takeUntil(mouseUp);
-  }).onValue(drawLine);
+  });
+
+  var drawMe = Bacon.combineTemplate({
+    points: movement,
+    color: color
+  }).skipDuplicates(function(oldValue, newValue) {
+    return oldValue.points[0] === newValue.points[0] &&
+           newVlaue.points[1] === newValue.points[1];
+  });
+
+  drawMe.onValue(drawLine);
 });
