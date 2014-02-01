@@ -2,8 +2,6 @@ $(function() {
   var canvas = document.getElementById('draw');
   var ctx = canvas.getContext('2d');
 
-  var coords = $('#coordinates');
-
   function toPoint(v) {
     return { x: v.offsetX, y: v.offsetY };
   }
@@ -12,9 +10,9 @@ $(function() {
     return '(' + p.x + ',' + p.y + ')';
   }
 
-  function updateCoords(v) {
-      coords.text(v);
-  }
+  var color = $('#color').asEventStream('input').map(function(v) {
+    return v.target.value;
+  }).toProperty();
 
   function drawLine(points) {
     var p1 = points[0];
@@ -22,6 +20,7 @@ $(function() {
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
+    ctx.strokeStyle = '#ff0000';
     ctx.stroke();
   }
 
@@ -31,7 +30,8 @@ $(function() {
   var mouseDown = $(canvas).asEventStream('mousedown');
   var mouseUp = $(document).asEventStream('mouseup');
 
-  points.map(toCoords).onValue(updateCoords);
+  points.map(toCoords).assign($('#coordinates'), 'text');
+  color.assign($('#colorSpan'), 'text');
   mouseDown.flatMap(function() {
     return points.slidingWindow(2,2).takeUntil(mouseUp);
   }).onValue(drawLine);
