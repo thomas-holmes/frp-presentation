@@ -1,0 +1,6 @@
+[submodule "slides/deck.js"]
+	path = slides/deck.js
+	url = https://github.com/imakewebthings/deck.js.git
+[submodule "slides/deck.js-codemirror"]
+	path = slides/deck.js-codemirror
+	url = https://github.com/iros/deck.js-codemirror.git
