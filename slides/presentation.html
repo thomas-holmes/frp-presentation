@@ -27,6 +27,11 @@
 
   <link rel="stylesheet" href="deck.js-codemirror/themes/default.css">
 
+  <link rel="stylesheet" href="style.css">
+
+  <script src="deck.js/jquery.min.js"></script>
+  <script src="Bacon.js"></script>
+
 	<!-- Required Modernizr file -->
 	<script src="deck.js/modernizr.custom.js"></script>
 </head>
@@ -35,24 +40,156 @@
 <!-- Begin slides. Just make elements with a class of slide. -->
 
 <section class="slide">
+  <h2>FRP</h2>
   <h1>Functional Reactive Programming</h1>
 </section>
+
 <!-- Intro -->
 <section class="slide">
-  <h2>What is Functional Reactive Programming?</h2>
-  <div class="slide">
-    <blockquote cite="http://en.wikipedia.org/wiki/Functional_reactive_programming">
-      <p>
-        Functional reactive programming is a programming paradigm for reactive programming using the building blocks of functional programming.
-      </p>
-      <cite>Wikipedia</cite>
-    </blockquote>
-  </div>
-  <div class="slide">
-    <p>Ok, so that probably didn't help. Let's try again...</p>
+  <h2>FRP</h2>
+  <h1>What is FRP?</h1>
+</section>
+<section class="slide">
+  <h2>FRP</h2>
+  <blockquote cite="http://en.wikipedia.org/wiki/Functional_reactive_programming">
+    <p>
+      Functional reactive programming is a programming paradigm for reactive programming using the building blocks of functional programming.
+    </p>
+    <cite>Wikipedia</cite>
+  </blockquote>
+</section>
+
+<section class="slide">
+  <h2>FRP</h2>
+  <h1>Functional</h1>
+</section>
+
+<section class="slide">
+  <h2>FRP</h2>
+  <h1>Reactive</h1>
+</section>
+
+<section class="slide">
+  <h2>FRP</h2>
+  <h1>Concise</h1>
+</section>
+
+<section class="slide">
+  <h2>FRP</h2>
+  <h1>Composable</h1>
+</section>
+
+<!-- Enumerable -->
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h1>Enumerable</h1>
+</section>
+
+<section class="slide">
+  <h2>Enumerable</h2>
+  <ul>
+    <li>map</li>
+    <li>reduce</li>
+    <li>select</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h3>Map</h2>
+  <div class="sample">
+    <textarea class="code" mode="ruby" style="display: none;">
+["cat", "dog", "horse"].map { |w| "#{w}fish" }
+# => ["catfish", "dogfish", "horsefish"]
+
+fishify = ->word { "#{word}fish" }
+["cat", "dog", "horse"].map &fishify
+# => ["catfish", "dogfish", "horsefish"]</textarea>
   </div>
 </section>
 
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h3>reduce</h2>
+  <div>
+    <textarea class="code" mode="ruby" style="display: none;">
+(1..10).reduce(:+)
+# => 55
+
+(1..10).reduce { |l, r| l + r }
+# => 55
+
+add = ->(l, r) { l + r }
+(1..10).reduce &add
+# => 55</textarea>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h3>select</h2>
+  <div>
+    <textarea class="code" mode="ruby" style="display: none;">
+(1..10).select { |num| num.even? }
+# => [2, 4, 6, 8, 10]
+
+even = ->(i) { i.even? }
+(1..10).select &even
+# => [2, 4, 6, 8, 10]</textarea>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h1>Pull based</h1>
+</section>
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h1>All data is present</h1>
+</section>
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h1>Immediate</h1>
+</section>
+<section class="slide">
+  <h2>Enumerable</h2>
+  <h1>Procedural</h1>
+</section>
+
+<section class="slide">
+  <h2>Bacon</h2>
+  <h1>Bacon JS</h1>
+</section>
+
+<!-- I'm cheating, and getting away with writing poorly scoped JS -->
+
+<section class="slide">
+  <h2>Bacon</h2>
+  <span id="span0"></span></br>
+  <button id="plus0">+1</button>
+  <script class="code" mode="javascript" type="text/javascript">// Requires JQuery and Bacon.js
+function add(l, r) { return l + r; }
+
+var plus = $("#plus0").asEventStream('click').map(1);
+var total = plus.scan(0, add);
+total.assign($("#span0"), 'text');</script>
+</section>
+
+<section class="slide">
+  <h2>Bacon</h2>
+  <span id="span1"></span></br>
+  <button id="minus1">-1</button>
+  <button id="plus1">+1</button>
+  <script class="code" mode="javascript" type="text/javascript">// Requires JQuery and Bacon.js
+function add(l, r) { return l + r; }
+var plus = $("#plus1").asEventStream('click').map(1);
+var minus = $("#minus1").asEventStream('click').map(-1);
+var values = plus.merge(minus);
+
+var total = values.scan(0, add);
+
+total.assign($("#span1"), 'text');</script>
+</section>
 <!-- End slides. -->
 
 <!-- Begin extension snippets. Add or remove as needed. -->
@@ -79,7 +216,6 @@
 <!-- End extension snippets. -->
 
 <!-- Required JS files. -->
-<script src="deck.js/jquery.min.js"></script>
 <script src="deck.js/core/deck.core.js"></script>
 <script src="deck.js-codemirror/codemirror.js"></script>
 	
@@ -110,8 +246,9 @@
 <!-- Initialize the deck. You can put this in an external file if desired. -->
 <script>
 	$(function() {
-		$.deck('.slide');
+      $.deck('.slide');
 	});
+
 </script>
 </body>
 </html>
