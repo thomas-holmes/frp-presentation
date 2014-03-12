@@ -2,3 +2,22 @@
   font-size: 48px;
   list-style-type: none;
 }
+
+.container {
+  margin-right: 50px;
+  float: left;
+  overflow: hidden;
+}
+
+.color-block {
+  width: 100px;
+  height: 100px;
+  background: #000;
+  border: 1px solid black;
+}
+
+.wrapper {
+  width: 200px;
+  height: 100px;
+  overflow: auto;
+}
