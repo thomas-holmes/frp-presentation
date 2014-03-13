@@ -72,12 +72,12 @@
 
 <section class="slide">
   <h2>FRP</h2>
-  <h1>Concise</h1>
+  <h1>Composable</h1>
 </section>
 
 <section class="slide">
   <h2>FRP</h2>
-  <h1>Composable</h1>
+  <h1>Concise</h1>
 </section>
 
 <!-- Enumerable -->
@@ -162,6 +162,21 @@ even = ->(i) { i.even? }
   <h1>Bacon.js</h1>
 </section>
 
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>Terminology</h1>
+</section>
+
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>Property</h1>
+</section>
+
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>Event Stream</h1>
+</section>
+
 <!-- I'm cheating, and getting away with writing poorly scoped JS -->
 
 <section class="slide">
@@ -203,10 +218,6 @@ total.assign($("#span1"), 'text');</script>
       <span>Sass</span>
       <div class="color-block" id="block2"></div>
     </div>
-    <div class="container">
-      <span>Negate</span>
-      <div class="color-block" id="block3"></div>
-    </div>
   </div>
   <div>
     Color 1: <input id="color1" type="color"></input>
@@ -224,35 +235,177 @@ function mixSass(c1, c2) {
   return c1.clone().mix(c2).hexString(); // Mix mutates, wtf?
 }
 
-function mixNegate(c1, c2) {
-  return c1.clone().negate(c2).hexString(); // Mix mutates, wtf?
-}
-
 function toColor(v) {
     return Color(v.target.value);
 }
 
 var color1 = $("#color1").asEventStream('input').map(toColor).toProperty(Color('black'));
 var color2 = $("#color2").asEventStream('input').map(toColor).toProperty(Color('black'));
-var color3 = $("#color2").asEventStream('input').map(toColor).toProperty(Color('black'));
 
 Bacon.combineWith(mixAdditive, color1, color2).assign($("#block1"), 'css', 'background');
 Bacon.combineWith(mixSass, color1, color2).assign($("#block2"), 'css', 'background');
-Bacon.combineWith(mixNegate, color1, color2).assign($("#block3"), 'css', 'background');
   </script>
 
-<div class="code" mode="javascript" type="text/javascript">// Requires JQuery and Bacon.js
-var color1 = $("#color1").asEventStream('input').map(toColor).toProperty()
-var color2 = $("#color2").asEventStream('input').map(toColor).toProperty()
-var color3 = $("#color2").asEventStream('input').map(toColor).toProperty()
+<textarea class="code" mode="javascript" type="text/javascript">// Requires JQuery and Bacon.js
+var color1 = $("#color1").asEventStream('input').map(toColor)
+              .toProperty()
+var color2 = $("#color2").asEventStream('input').map(toColor)
+              .toProperty()
 
 Bacon.combineWith(mixAdditive, color1, color2)
      .assign($("#block1"), 'css', 'background');
 Bacon.combineWith(mixSass, color1, color2)
      .assign($("#block2"), 'css', 'background');
-Bacon.combineWith(mixNegate, color1, color2)
-     .assign($("#block3"), 'css', 'background');
-</div>
+</textarea>
+</section>
+
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>What else can you do?</h1>
+</section>
+
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <ul>
+    <li>Make your own event streams</li>
+    <li>Flatten AJAX responses into a stream</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <div>
+    <span>Enter a word</span>
+    <input id="word", type="text"></input>
+  </div>
+  <h4>Fast Suggestor</h4>
+  <div id="suggestions">
+  </div>
+  </br>
+  <h4>Slow suggestions(0.5-3 second response)</h4>
+  <div id="slow-suggestions">
+  </div>
+
+<script type="text/javascript">
+var input = $('#word')
+          .asEventStream("keyup")
+          .map(function(event) { return event.target.value; });
+
+var webSuggestions = input.debounce(200).flatMap(function(word) {
+    return Bacon.fromPromise($.ajax(
+        {
+          url: 'http://localhost:4567/words?word=' + word,
+          dataType: 'json'
+        })
+      )});
+
+var suggestions = webSuggestions.map(function(v) {
+    return v.suggestions.toString();
+  }).toProperty('');
+
+suggestions.assign($('#suggestions'), 'text');
+
+var slowWebSuggestions = input.debounce(200).flatMap(function(word) {
+    return Bacon.fromPromise($.ajax(
+        {
+          url: 'http://localhost:4567/words?slow=true&word=' + word,
+          dataType: 'json'
+        })
+      )});
+
+var slowSuggestions = slowWebSuggestions.map(function(v) {
+    return v.suggestions.toString();
+  }).toProperty('');
+
+slowSuggestions.assign($('#slow-suggestions'), 'text');
+</script>
+</section>
+
+<section class='slide'>
+  <h2>Bacon.js</h2>
+  <h3>How do you do that?</h3>
+  <div class="code" mode="javascript">var input = $('#word').asEventStream("keyup")
+          .map(function(event) { return event.target.value; });
+
+var webSuggestions = input.debounce(200)
+  .flatMap(function(word) {
+    return Bacon.fromPromise($.ajax({
+          url: 'http://localhost:4567/words?word=' + word,
+          dataType: 'json' }))});
+
+var suggestions = webSuggestions.map(function(v) {
+    return v.suggestions.toString();
+  }).toProperty('');
+
+suggestions.assign($('#suggestions'), 'text');</div>
+</section>
+
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>flatMap?</h2>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>Take a step back</h2>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h3>Ruby flat_map</h3>
+<textarea class="code", mode="ruby">[[1, 2], [3, 4]].flat_map
+# => [1, 2, 3, 4]</textarea>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>Just like arrays but for events</h2>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>fromPromise?</h2>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>EventStream to Promise</h2>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h3>Integration</h3>
+  <ul>
+    <li>jQuery</li>
+    <li>Zepto</li>
+    <li>[Node]Callbacks</li>
+    <li>Promises</li>
+    <li>Node EventEmitter</li>
+  </ul>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h3>Capabilities</h3>
+  <ul>
+    <li>Throttle</li>
+    <li>Buffer</li>
+    <li>Delay</li>
+    <li>Sliding window</li>
+    <li>Merging</li>
+  </ul>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h3>Incorporating</h3>
+  <ul>
+    <li>npm</li>
+    <li>AMD</li>
+    <li>browser</li>
+  </ul>
+</section>
+<section class="slide">
+  <h2>Bacon.js</h2>
+  <h1>Works Everywhere</h1>
+</section>
+<section class="slide">
+  <h2>About me</h2>
+  <h4>Thomas Holmes</h4>
+  <h4>@_tholmes</h4>
+  <h4>thomas@holmes.io</h4>
 </section>
 <!-- End slides. -->
 
@@ -282,7 +435,7 @@ Bacon.combineWith(mixNegate, color1, color2)
 <!-- Required JS files. -->
 <script src="deck.js/core/deck.core.js"></script>
 <script src="deck.js-codemirror/codemirror.js"></script>
-  
+
 
 <!-- Extension JS files. Add or remove as needed. -->
 <script src="deck.js/core/deck.core.js"></script>
